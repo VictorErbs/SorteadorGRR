@@ -1,73 +1,34 @@
-document.addEventListener('DOMContentLoaded', function() {
-  let namesInput = document.getElementById('names');
-  let idsInput = document.getElementById('ids');
-  let sortearButton = document.getElementById('sortearButton');
-  let resultado = document.getElementById('resultado');
+document.getElementById('sortearButton').addEventListener('click', function () {
+  // Obter os nomes e IDs inseridos
+  const namesInput = document.getElementById('names').value;
+  const idsInput = document.getElementById('ids').value;
 
-  // Carregar dados salvos, se existirem
-  namesInput.value = localStorage.getItem('nomes') || '';
-  idsInput.value = localStorage.getItem('ids') || '';
+  // Dividir os nomes e IDs em arrays
+  const namesArray = namesInput.split(',');
+  const idsArray = idsInput.split(',');
 
-  namesInput.addEventListener('input', salvarDados);
-  idsInput.addEventListener('input', salvarDados);
-  sortearButton.addEventListener('click', realizarSorteio);
-
-  function salvarDados() {
-    localStorage.setItem('nomes', namesInput.value);
-    localStorage.setItem('ids', idsInput.value);
+  // Verificar se há pelo menos 2 nomes e IDs
+  if (namesArray.length < 2 || idsArray.length < 2) {
+    document.getElementById('resultado').innerText = 'Insira pelo menos 2 nomes e 2 IDs para sortear.';
+    return;
   }
 
-  function realizarSorteio() {
-    let namesInput = localStorage.getItem('nomes');
-    let idsInput = localStorage.getItem('ids');
+  // Sortear dois índices aleatórios
+  const randomIndex1 = Math.floor(Math.random() * namesArray.length);
+  let randomIndex2 = Math.floor(Math.random() * namesArray.length);
 
-    if (!namesInput || !idsInput) {
-      resultado.innerHTML = 'Por favor, preencha todos os campos.';
-      return;
-    }
-
-    let names = namesInput.split(',');
-    let ids = idsInput.split(',');
-
-    if (names.length < 2 || ids.length < 2) {
-      resultado.innerHTML = 'É necessário pelo menos 2 nomes e 2 IDs para realizar o sorteio.';
-      return;
-    }
-
-    if (names.length !== ids.length) {
-      resultado.innerHTML = 'O número de nomes e IDs não corresponde.';
-      return;
-    }
-
-    let totalParticipantes = names.length;
-    let ganhadores = [];
-
-    // Sorteio sem repetição
-    while (ganhadores.length < 2 && totalParticipantes > 0) {
-      let randomIndex = Math.floor(Math.random() * totalParticipantes);
-      let ganhador = `${names[randomIndex]} (ID: ${ids[randomIndex]})`;
-
-      if (!ganhadores.includes(ganhador)) {
-        ganhadores.push(ganhador);
-        [names[randomIndex], names[totalParticipantes - 1]] = [names[totalParticipantes - 1], names[randomIndex]];
-        [ids[randomIndex], ids[totalParticipantes - 1]] = [ids[totalParticipantes - 1], ids[randomIndex]];
-      }
-
-      totalParticipantes--;
-    }
-
-    if (ganhadores.length < 2) {
-      resultado.innerHTML = 'Não há participantes suficientes para realizar o sorteio sem repetição.';
-    } else {
-      resultado.innerHTML = `Os ganhadores são: ${ganhadores.join(' e ')}`;
-    }
-
-    if (totalParticipantes === 0) {
-      resultado.innerHTML += '<br>Não há mais ganhadores para sortear.';
-    }
-
-    // Atualizar os campos de entrada com os nomes restantes
-    namesInput.value = names.slice(0, totalParticipantes).join(',');
-    idsInput.value = ids.slice(0, totalParticipantes).join(',');
+  // Certificar-se de que o segundo índice não seja igual ao primeiro
+  while (randomIndex2 === randomIndex1) {
+    randomIndex2 = Math.floor(Math.random() * namesArray.length);
   }
+
+  // Obter os ganhadores com base nos índices sorteados
+  const winner1Name = namesArray[randomIndex1];
+  const winner1ID = idsArray[randomIndex1];
+  const winner2Name = namesArray[randomIndex2];
+  const winner2ID = idsArray[randomIndex2];
+
+  // Exibir os ganhadores
+  const resultado = `Ganhador 1: ${winner1Name} (ID: ${winner1ID})<br>Ganhador 2: ${winner2Name} (ID: ${winner2ID})`;
+  document.getElementById('resultado').innerHTML = resultado;
 });

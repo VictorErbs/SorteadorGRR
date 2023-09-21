@@ -18,13 +18,23 @@ body {
 
 .content {
   text-align: center;
-  background-color: #ffffff;
+  background-image: url(images/GRR2.png), url(images/GRRRE.png);
+  background-size: 20% auto;
+  background-position: left bottom, right bottom;
+  background-repeat: no-repeat;
+  background-color: rgba(255, 255, 255, 0.7); 
   padding: 30px;
-  border-radius: 10px;
+  border-radius: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   opacity: 0;
   transform: translateY(20px);
   animation: fade-in 0.5s forwards;
+}
+
+/* Estilo para o texto azul nos campos de resultado */
+#resultado,
+.input-container label {
+  color: #000080; /* Azul escuro */
 }
 
 @keyframes fade-in {
@@ -68,7 +78,7 @@ textarea {
   border-radius: 5px;
   font-size: 16px;
   margin-top: 20px;
-  border: none;
+  border: true;
   transition: background-color 0.3s ease;
   cursor: pointer;
 }

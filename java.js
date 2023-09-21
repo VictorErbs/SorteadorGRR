@@ -4,16 +4,17 @@ document.addEventListener('DOMContentLoaded', function() {
   let sortearButton = document.getElementById('sortearButton');
   let resultado = document.getElementById('resultado');
 
+  // Carregar dados salvos, se existirem
+  namesInput.value = localStorage.getItem('nomes') || '';
+  idsInput.value = localStorage.getItem('ids') || '';
+
   namesInput.addEventListener('input', salvarDados);
   idsInput.addEventListener('input', salvarDados);
   sortearButton.addEventListener('click', realizarSorteio);
 
   function salvarDados() {
-    let names = namesInput.value;
-    let ids = idsInput.value;
-
-    localStorage.setItem('nomes', names);
-    localStorage.setItem('ids', ids);
+    localStorage.setItem('nomes', namesInput.value);
+    localStorage.setItem('ids', idsInput.value);
   }
 
   function realizarSorteio() {
@@ -33,16 +34,40 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
 
-    let ganhadores = [];
-
-    while (ganhadores.length < 2) {
-      let randomIndex = Math.floor(Math.random() * names.length);
-      let ganhador = `${names[randomIndex]} (ID: ${ids[randomIndex]})`;
-      ganhadores.push(ganhador);
-      names.splice(randomIndex, 1);
-      ids.splice(randomIndex, 1);
+    if (names.length !== ids.length) {
+      resultado.innerHTML = 'O número de nomes e IDs não corresponde.';
+      return;
     }
 
-    resultado.innerHTML = `Os ganhadores são: ${ganhadores.join(' e ')}`;
+    let totalParticipantes = names.length;
+    let ganhadores = [];
+
+    // Sorteio sem repetição
+    while (ganhadores.length < 2 && totalParticipantes > 0) {
+      let randomIndex = Math.floor(Math.random() * totalParticipantes);
+      let ganhador = `${names[randomIndex]} (ID: ${ids[randomIndex]})`;
+
+      if (!ganhadores.includes(ganhador)) {
+        ganhadores.push(ganhador);
+        [names[randomIndex], names[totalParticipantes - 1]] = [names[totalParticipantes - 1], names[randomIndex]];
+        [ids[randomIndex], ids[totalParticipantes - 1]] = [ids[totalParticipantes - 1], ids[randomIndex]];
+      }
+
+      totalParticipantes--;
+    }
+
+    if (ganhadores.length < 2) {
+      resultado.innerHTML = 'Não há participantes suficientes para realizar o sorteio sem repetição.';
+    } else {
+      resultado.innerHTML = `Os ganhadores são: ${ganhadores.join(' e ')}`;
+    }
+
+    if (totalParticipantes === 0) {
+      resultado.innerHTML += '<br>Não há mais ganhadores para sortear.';
+    }
+
+    // Atualizar os campos de entrada com os nomes restantes
+    namesInput.value = names.slice(0, totalParticipantes).join(',');
+    idsInput.value = ids.slice(0, totalParticipantes).join(',');
   }
 });

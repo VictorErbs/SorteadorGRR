@@ -21,7 +21,3 @@ O GRR é um aplicativo web simples que permite realizar sorteios de forma aleat�
 - HTML
 - CSS
 - JavaScript
-
-## Licença
-
-Este projeto está licenciado sob a [MIT License](LICENSE).
